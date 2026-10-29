@@ -1,0 +1,34 @@
+---
+- name: Gather service information
+  ansible.builtin.service_facts:
+
+- name: Stop and disable the service
+  ansible.builtin.systemd_service:
+    name: "{{ node_exporter_service_name }}"
+    state: stopped
+    enabled: false
+  when: (node_exporter_service_name ~ '.service') in ansible_facts.services
+
+- name: Remove the systemd unit
+  ansible.builtin.file:
+    path: "/etc/systemd/system/{{ node_exporter_service_name }}.service"
+    state: absent
+
+- name: Reload systemd
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
+- name: Remove the install directory
+  ansible.builtin.file:
+    path: "{{ node_exporter_install_dir }}"
+    state: absent
+
+- name: Remove the service user
+  ansible.builtin.user:
+    name: "{{ node_exporter_user }}"
+    state: absent
+
+- name: Remove the service group
+  ansible.builtin.group:
+    name: "{{ node_exporter_user }}"
+    state: absent

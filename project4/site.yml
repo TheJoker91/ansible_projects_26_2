@@ -1,0 +1,6 @@
+---
+- hosts: linux
+  become: true
+  serial: "{{ rollout_serial | default('100%') }}"
+  roles:
+    - node_exporter

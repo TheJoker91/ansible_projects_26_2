@@ -1,0 +1,24 @@
+---
+# Patch behavior
+patch_security_only: true
+patch_releasever_latest: false
+patch_exclude_packages: []
+
+# Debian/Ubuntu settings
+patch_apt_cache_valid_time: 3600
+patch_install_unattended_upgrades: true
+
+# Reboot settings
+patch_allow_reboot: true
+patch_reboot_timeout: 600
+patch_reboot_msg: "Rebooting after security patching by Ansible"
+
+# Patch report
+patch_report_dir: "/var/log/patching"
+
+# Cron schedule (1st of every month at 03:00, control node time)
+patch_cron_name: "Monthly security patching"
+patch_cron_minute: "0"
+patch_cron_hour: "3"
+patch_cron_day: "1"
+patch_cron_log: "/home/ubuntu/ansible-projects/project3/patch_cron.log"

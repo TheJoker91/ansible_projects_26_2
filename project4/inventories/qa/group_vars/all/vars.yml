@@ -1,0 +1,4 @@
+---
+node_exporter_env: qa
+node_exporter_port: 9101
+node_exporter_version: "1.8.2"

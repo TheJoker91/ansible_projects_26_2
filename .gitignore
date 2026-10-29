@@ -1,0 +1,13 @@
+# Secrets
+project1/vars.yml
+*.pem
+*.key
+.vault_pass*
+
+# Ansible artifacts
+*.retry
+*.log
+
+# OS / editor
+.DS_Store
+.vscode/

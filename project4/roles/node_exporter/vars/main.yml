@@ -1,0 +1,27 @@
+---
+# State (present = install, absent = remove). Override with: -e node_exporter_state=absent
+node_exporter_state: present
+
+# Network
+node_exporter_listen_address: "0.0.0.0"
+
+# Per-environment names and paths
+node_exporter_service_name: "node_exporter-{{ node_exporter_env }}"
+node_exporter_user: "node_exporter_{{ node_exporter_env }}"
+node_exporter_install_dir: "/opt/node_exporter/{{ node_exporter_env }}"
+
+# Extra command-line flags
+node_exporter_extra_args: []
+
+# Map Ansible CPU names to release file names
+node_exporter_arch_map:
+  x86_64: amd64
+  aarch64: arm64
+
+node_exporter_arch: "{{ node_exporter_arch_map[ansible_architecture] }}"
+
+# Download URLs
+node_exporter_release_url: "https://github.com/prometheus/node_exporter/releases/download/v{{ node_exporter_version }}"
+node_exporter_archive: "node_exporter-{{ node_exporter_version }}.linux-{{ node_exporter_arch }}"
+node_exporter_download_url: "{{ node_exporter_release_url }}/{{ node_exporter_archive }}.tar.gz"
+node_exporter_checksum_url: "{{ node_exporter_release_url }}/sha256sums.txt"

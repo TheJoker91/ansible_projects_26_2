@@ -1,0 +1,18 @@
+---
+- name: Validate environment settings
+  ansible.builtin.assert:
+    that:
+      - node_exporter_env in ['dev', 'qa', 'uat', 'prod']
+      - node_exporter_port | int >= 9100
+      - node_exporter_port | int <= 9199
+      - node_exporter_state in ['present', 'absent']
+    fail_msg: "Invalid settings: env={{ node_exporter_env }} port={{ node_exporter_port }} state={{ node_exporter_state }}"
+    quiet: true
+
+- name: Install node exporter
+  ansible.builtin.include_tasks: install.yml
+  when: node_exporter_state == "present"
+
+- name: Remove node exporter
+  ansible.builtin.include_tasks: remove.yml
+  when: node_exporter_state == "absent"

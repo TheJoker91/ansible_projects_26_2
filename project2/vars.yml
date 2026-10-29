@@ -1,0 +1,20 @@
+---
+# Backup location
+backup_dir: "/backups"
+backup_dir_mode: "0700"
+
+# Timestamp (matches: date +%F_%H-%M-%S)
+backup_timestamp: "{{ ansible_date_time.date }}_{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}-{{ ansible_date_time.second }}"
+
+# Directories to back up
+backup_sources:
+  - name: etc
+    path: /etc
+  - name: web
+    path: /var/www
+
+# Archive format
+backup_format: gz
+
+# Retention
+backup_retention_days: 7

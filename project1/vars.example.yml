@@ -1,0 +1,20 @@
+---
+# Datadog account settings
+dd_api_key: "YOUR_DATADOG_API_KEY"
+dd_site: "datadoghq.com"
+dd_env: "dev"
+
+# Per-host identity
+dd_hostname: "{{ inventory_hostname }}"
+
+# Install script
+dd_script_url: "https://install.datadoghq.com/scripts/install_script_agent7.sh"
+dd_script_path: "/tmp/install_script_agent7.sh"
+
+# Agent paths and service
+dd_config_file: "/etc/datadog-agent/datadog.yaml"
+dd_service_name: "datadog-agent"
+
+# Health check tuning
+dd_health_retries: 6
+dd_health_delay: 10

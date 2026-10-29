@@ -1,0 +1,68 @@
+---
+- hosts: monitored
+  become: true
+  ignore ignore_errors: false
+  vars_files:
+    - vars.yml
+
+  tasks:
+    - name: Create the backup directory
+      ansible.builtin.file:
+        path: "{{ backup_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "{{ backup_dir_mode }}"
+
+    - name: Check which backup sources exist
+      ansible.builtin.stat:
+        path: "{{ item.path }}"
+      loop: "{{ backup_sources }}"
+      loop_control:
+        label: "{{ item.path }}"
+      register: source_stats
+
+    - name: Report missing sources
+      ansible.builtin.debug:
+        msg: "Skipping {{ item.item.path }} - not found on {{ inventory_hostname }}"
+      loop: "{{ source_stats.results }}"
+      loop_control:
+        label: "{{ item.item.path }}"
+      when: not item.stat.exists
+
+    - name: Archive existing sources
+      community.general.archive:
+        path: "{{ item.item.path }}"
+        dest: "{{ backup_dir }}/{{ item.item.name }}_backup_{{ backup_timestamp }}.tar.gz"
+        format: "{{ backup_format }}"
+        owner: root
+        group: root
+        mode: "0600"
+      loop: "{{ source_stats.results }}"
+      loop_control:
+        label: "{{ item.item.path }}"
+      when: item.stat.exists and item.stat.isdir
+
+    - name: Find backups older than the retention period
+      ansible.builtin.find:
+        paths: "{{ backup_dir }}"
+        patterns: "*_backup_*.tar.gz"
+        age: "{{ backup_retention_days }}d"
+      register: old_backups
+
+    - name: Delete expired backups
+      ansible.builtin.file:
+        path: "{{ item.path }}"
+        state: absent
+      loop: "{{ old_backups.files }}"
+      loop_control:
+        label: "{{ item.path | basename }}"
+
+    - name: List backup files
+      ansible.builtin.command: "ls -lh {{ backup_dir }}"
+      register: backup_listing
+      changed_when: false
+
+    - name: Show backup files
+      ansible.builtin.debug:
+        var: backup_listing.stdout_lines
